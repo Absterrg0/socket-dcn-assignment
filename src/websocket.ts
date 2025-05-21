@@ -1,8 +1,10 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import http from 'http';
-import { v4 as uuidv4 } from 'uuid'; // You'll need to install this: npm install uuid @types/uuid
+import { v4 as uuidv4 } from 'uuid'; 
+import express from 'express';
 
-const server = http.createServer();
+const app = express();
+const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
 interface Room {
@@ -26,7 +28,7 @@ interface ClientState {
   userName: string | null;
   currentRoom: string | null;
 }
-
+const PORT = 8080;
 // Default room that all users will join
 const DEFAULT_ROOM_ID = 'default-room';
 const DEFAULT_ROOM_NAME = 'Main Chat Room';
@@ -46,6 +48,12 @@ const clientStates = new WeakMap<WebSocket, ClientState>();
 
 // Max messages to store per room
 const MAX_MESSAGES_PER_ROOM = 100;
+
+
+app.get('/', (req, res) => {
+  res.send('WebSocket server is running');
+});
+
 
 wss.on('connection', (ws) => {
   console.log('Client connected');
@@ -281,6 +289,6 @@ wss.on('connection', (ws) => {
   }
 });
 
-server.listen(8080, () => {
-  console.log('WebSocket server started on port 8080');
+server.listen(PORT, () => {
+  console.log(`WebSocket server started on port ${PORT}`);
 });
